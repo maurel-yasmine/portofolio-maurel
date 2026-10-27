@@ -3,6 +3,13 @@
 // Small global settings (not personal data — that lives in Identity.ts).
 // ============================================================
 
+/**
+ * Canonical production URL. Used for every canonical link, Open Graph URL,
+ * JSON-LD `@id`, sitemap entry and robots.txt when VITE_DOMAIN is not set.
+ * Change this (or set VITE_DOMAIN) if the site moves to another domain.
+ */
+export const DEFAULT_SITE_URL = "https://portofolio-maurel.vercel.app";
+
 export const APP_CONFIG = {
   /** Added after the page title in <title> tags. */
   titleSuffix: "Portfolio",

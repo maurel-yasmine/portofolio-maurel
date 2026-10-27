@@ -471,11 +471,16 @@ Netlify users: create a file `public/_redirects` containing `/* /index.html 200`
 
 ### Set your real domain (important for sharing previews)
 
+The site already defaults to **`https://portofolio-maurel.vercel.app`** for canonical links,
+Open Graph URLs, `sitemap.xml` and `robots.txt` (see `DEFAULT_SITE_URL` in `src/config/AppConfig.ts`).
+
+You only need this step if the site moves to a different domain:
+
 1. Copy `.env.example` to a new file called `.env`.
 2. Fill in your domain:
 
 ```env
-VITE_DOMAIN=https://your-site.vercel.app
+VITE_DOMAIN=https://portofolio-maurel.vercel.app
 ```
 
 3. Redeploy. Now the canonical links, `sitemap.xml` and social preview images point to the right place.

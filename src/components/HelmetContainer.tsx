@@ -1,6 +1,6 @@
 import { Helmet } from "react-helmet-async";
 import { JsonLd } from "@/components/JsonLd";
-import { APP_CONFIG } from "@/config/AppConfig";
+import { APP_CONFIG, DEFAULT_SITE_URL } from "@/config/AppConfig";
 import { OWNER_NAME, PORTRAIT_IMAGE } from "@/config/Identity";
 import { SITE_METADATA, buildJsonLd } from "@/config/Metadata";
 import type { RoutePath } from "@/config/Metadata";
@@ -56,10 +56,10 @@ function resolveDomain(): string {
   if (fromEnv && fromEnv.trim().length > 0) {
     return fromEnv.replace(/\/+$/, "");
   }
-  if (typeof window !== "undefined" && window.location.origin) {
-    return window.location.origin;
-  }
-  return "http://localhost:5173";
+
+  // Always canonicalise to the production domain — never to the current
+  // origin, so a local dev server cannot leak localhost into the head tags.
+  return DEFAULT_SITE_URL;
 }
 
 /**

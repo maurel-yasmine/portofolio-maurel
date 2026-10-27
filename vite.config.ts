@@ -4,11 +4,13 @@ import tailwindcss from "@tailwindcss/vite";
 import Pages from "vite-plugin-pages";
 import { fileURLToPath, URL } from "node:url";
 import { viteHeadPlugin } from "./vite-plugin-head.ts";
+import { DEFAULT_SITE_URL } from "./src/config/AppConfig.ts";
 
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), "");
-  const domain = (env.VITE_DOMAIN || "http://localhost:5173").replace(/\/+$/, "");
+  // Production URL by default; override with VITE_DOMAIN when needed.
+  const domain = (env.VITE_DOMAIN || DEFAULT_SITE_URL).replace(/\/+$/, "");
 
   return {
     base: "/",
