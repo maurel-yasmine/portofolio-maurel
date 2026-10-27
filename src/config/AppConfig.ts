@@ -10,9 +10,6 @@ export const APP_CONFIG = {
   /** next-themes storage key. */
   themeStorageKey: "maurel-theme",
 
-  /** sessionStorage key used to show the welcome splash only once per visit. */
-  welcomeStorageKey: "maurel-welcome-seen",
-
   /** How long a route transition takes, in seconds. */
   transitionDuration: 0.45,
 

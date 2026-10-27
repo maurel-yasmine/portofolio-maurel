@@ -19,8 +19,10 @@ interface ContainerProviderProps {
 }
 
 /**
- * Tracks viewport size (for animation decisions) and renders the very first
- * cream-coloured splash that fades out once the app has painted.
+ * Tracks viewport size for the animation logic used across the site.
+ *
+ * There is no landing/splash overlay: the page renders immediately so the
+ * portfolio is visible on first paint.
  */
 export function ContainerProvider({ children }: ContainerProviderProps) {
   const [fullPathName, setFullPathName] = useState<string>(() =>
@@ -28,7 +30,6 @@ export function ContainerProvider({ children }: ContainerProviderProps) {
   );
   const [isTiny, setIsTiny] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
-  const [splashVisible, setSplashVisible] = useState(true);
 
   useEffect(() => {
     const measure = () => {
@@ -42,29 +43,12 @@ export function ContainerProvider({ children }: ContainerProviderProps) {
     return () => window.removeEventListener("resize", measure);
   }, []);
 
-  useEffect(() => {
-    const timer = window.setTimeout(() => setSplashVisible(false), 480);
-    return () => window.clearTimeout(timer);
-  }, []);
-
   const value = useMemo<ContainerContextValue>(
     () => ({ fullPathName, setFullPathName, isTiny, isMobile }),
     [fullPathName, isTiny, isMobile],
   );
 
-  return (
-    <ContainerContext.Provider value={value}>
-      {children}
-
-      {/* Initial cream splash — fades away on first paint. */}
-      <div
-        aria-hidden="true"
-        className={`pointer-events-none fixed inset-0 z-[100] bg-cream transition-opacity duration-700 ease-out dark:bg-[#1a1418] ${
-          splashVisible ? "opacity-100" : "opacity-0"
-        }`}
-      />
-    </ContainerContext.Provider>
-  );
+  return <ContainerContext.Provider value={value}>{children}</ContainerContext.Provider>;
 }
 
 export function useContainer(): ContainerContextValue {

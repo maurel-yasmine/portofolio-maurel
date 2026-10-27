@@ -4,7 +4,6 @@ import { Loading } from "@/components/Loading";
 import { PageTransition } from "@/components/PageTransition";
 import { ContainerProvider } from "@/context/ContainerProvider";
 import { ThemeProviderContext } from "@/context/ThemeProviderContext";
-import { WelcomeProvider } from "@/context/WelcomeProvider";
 import { MainLayout } from "@/layouts/MainLayout";
 import routes from "virtual:generated-pages-react";
 
@@ -48,17 +47,15 @@ export default function App() {
   return (
     <ThemeProviderContext>
       <ContainerProvider>
-        <WelcomeProvider>
-          <BrowserRouter>
-            <a
-              href="#main-content"
-              className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[200] focus:rounded-full focus:bg-white focus:px-4 focus:py-2 focus:text-sm focus:text-ink"
-            >
-              Skip to content
-            </a>
-            <AppRoutes />
-          </BrowserRouter>
-        </WelcomeProvider>
+        <BrowserRouter>
+          <a
+            href="#main-content"
+            className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[200] focus:rounded-full focus:bg-white focus:px-4 focus:py-2 focus:text-sm focus:text-ink"
+          >
+            Skip to content
+          </a>
+          <AppRoutes />
+        </BrowserRouter>
       </ContainerProvider>
     </ThemeProviderContext>
   );
