@@ -1,5 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
-import { ChevronLeft, ChevronRight } from "@/data/icons";
+import { useCallback, useRef, useState } from "react";
 
 interface ProjectImageCarouselProps {
   /** One or more screenshot paths. A single image renders without controls. */
@@ -7,95 +6,95 @@ interface ProjectImageCarouselProps {
   /** Used for the alt text. */
   alt: string;
   className?: string;
+  /** Opens the fullscreen lightbox at the tapped image. */
+  onImageClick?: (index: number) => void;
 }
 
 /**
  * Screenshot viewer used inside the project modals.
  *
- * When a project has more than one image it becomes a carousel with
- * previous/next arrows, dot pagination and arrow-key support. With a single
- * image the controls are hidden entirely.
+ * Navigation is touch-native: the track is a snap-scrolling container, so
+ * mobile users swipe left/right and desktop users can drag/scroll. There are
+ * no arrow overlays covering the dashboard; only the counter badge sits on the
+ * image, with small dots below it for direct access.
  *
- * Mount it with a `key` tied to the project so the index resets between
- * projects.
+ * Tapping an image calls `onImageClick` so the modal can open the lightbox.
  */
-export function ProjectImageCarousel({ images, alt, className = "" }: ProjectImageCarouselProps) {
+export function ProjectImageCarousel({
+  images,
+  alt,
+  className = "",
+  onImageClick,
+}: ProjectImageCarouselProps) {
   const [index, setIndex] = useState(0);
+  const trackRef = useRef<HTMLDivElement | null>(null);
   const total = images.length;
 
-  const go = useCallback(
-    (delta: number) => {
-      setIndex((current) => (current + delta + total) % total);
-    },
-    [total],
-  );
+  const handleScroll = useCallback(() => {
+    const track = trackRef.current;
+    if (!track || total <= 1) return;
 
-  useEffect(() => {
-    if (total <= 1) return;
+    const width = track.clientWidth || 1;
+    const next = Math.min(Math.max(Math.round(track.scrollLeft / width), 0), total - 1);
+    setIndex((current) => (current === next ? current : next));
+  }, [total]);
 
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "ArrowLeft") go(-1);
-      if (event.key === "ArrowRight") go(1);
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [go, total]);
-
-  const safeIndex = Math.min(index, Math.max(total - 1, 0));
-  const currentImage = images[safeIndex] ?? images[0];
+  const goTo = useCallback((target: number) => {
+    const track = trackRef.current;
+    if (!track) return;
+    track.scrollTo({ left: track.clientWidth * target, behavior: "smooth" });
+    setIndex(target);
+  }, []);
 
   return (
-    <div
-      className={`relative overflow-hidden rounded-2xl border border-border-soft bg-blush/20 dark:bg-white/5 ${className}`}
-    >
-      <img
-        src={currentImage}
-        alt={total > 1 ? `${alt} — screenshot ${safeIndex + 1} of ${total}` : alt}
-        className="aspect-video w-full bg-white object-contain dark:bg-[#141014]"
-      />
+    <div className={`relative ${className}`}>
+      <div
+        ref={trackRef}
+        onScroll={handleScroll}
+        className="scrollbar-hide flex snap-x snap-mandatory overflow-x-auto overscroll-x-contain"
+      >
+        {images.map((src, imageIndex) => (
+          <div key={`${src}-${imageIndex}`} className="w-full shrink-0 snap-center">
+            <button
+              type="button"
+              onClick={() => onImageClick?.(imageIndex)}
+              aria-label={`Open screenshot ${imageIndex + 1} of ${total} fullscreen`}
+              className="block w-full cursor-zoom-in"
+            >
+              <img
+                src={src}
+                alt={total > 1 ? `${alt} — screenshot ${imageIndex + 1} of ${total}` : alt}
+                draggable={false}
+                className="aspect-video w-full select-none bg-white object-contain dark:bg-[#141014]"
+              />
+            </button>
+          </div>
+        ))}
+      </div>
 
       {total > 1 && (
-        <>
-          <button
-            type="button"
-            onClick={() => go(-1)}
-            aria-label="Previous screenshot"
-            className="glass-pill absolute left-2 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center text-lg text-ink transition hover:scale-110 hover:text-rose-deep dark:text-[#f3eaf0]"
-          >
-            <ChevronLeft />
-          </button>
+        <span className="pointer-events-none absolute right-2 top-2 rounded-full bg-ink/55 px-2 py-0.5 text-[10px] font-medium text-white backdrop-blur-sm">
+          {index + 1}/{total}
+        </span>
+      )}
 
-          <button
-            type="button"
-            onClick={() => go(1)}
-            aria-label="Next screenshot"
-            className="glass-pill absolute right-2 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center text-lg text-ink transition hover:scale-110 hover:text-rose-deep dark:text-[#f3eaf0]"
-          >
-            <ChevronRight />
-          </button>
-
-          <span className="absolute right-2 top-2 rounded-full bg-ink/55 px-2 py-0.5 text-[10px] font-medium text-white backdrop-blur-sm">
-            {safeIndex + 1}/{total}
-          </span>
-
-          <div className="absolute inset-x-0 bottom-2 flex items-center justify-center gap-1.5">
-            {images.map((image, dotIndex) => (
-              <button
-                key={`${image}-${dotIndex}`}
-                type="button"
-                onClick={() => setIndex(dotIndex)}
-                aria-label={`Go to screenshot ${dotIndex + 1}`}
-                aria-current={dotIndex === safeIndex}
-                className={`h-1.5 rounded-full transition-all duration-300 ${
-                  dotIndex === safeIndex
-                    ? "w-4 bg-white"
-                    : "w-1.5 bg-white/55 hover:bg-white/80"
-                }`}
-              />
-            ))}
-          </div>
-        </>
+      {total > 1 && (
+        <div className="mt-2 flex items-center justify-center gap-1.5">
+          {images.map((image, dotIndex) => (
+            <button
+              key={`${image}-dot-${dotIndex}`}
+              type="button"
+              onClick={() => goTo(dotIndex)}
+              aria-label={`Go to screenshot ${dotIndex + 1}`}
+              aria-current={dotIndex === index}
+              className={`h-1.5 rounded-full transition-all duration-300 ${
+                dotIndex === index
+                  ? "w-4 bg-rose-deep dark:bg-rose"
+                  : "w-1.5 bg-border-soft hover:bg-rose/50 dark:bg-[#33262e]"
+              }`}
+            />
+          ))}
+        </div>
       )}
     </div>
   );

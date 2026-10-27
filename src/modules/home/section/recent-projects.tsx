@@ -1,10 +1,11 @@
 import { useCallback, useState } from "react";
 import { Link } from "react-router-dom";
 import { BackgroundBlobs } from "@/components/BackgroundBlobs";
+import { ProjectDetailModal } from "@/components/ProjectDetailModal";
 import { ArrowRight, Folder } from "@/data/icons";
 import { Projects } from "@/data/projects";
 import type { Project } from "@/data/projects";
-import { ProjectComponent, ProjectModal } from "../components/project-component";
+import { ProjectComponent } from "../components/project-component";
 
 const RECENT_COUNT = 4;
 
@@ -67,7 +68,7 @@ export function RecentProjects() {
         </div>
       </div>
 
-      <ProjectModal project={selected} onClose={closeModal} />
+      <ProjectDetailModal project={selected} onClose={closeModal} />
     </section>
   );
 }
