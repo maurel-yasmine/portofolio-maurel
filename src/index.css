@@ -1,0 +1,280 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+@source "../src/**/*.{ts,tsx,html}";
+
+/* Dark mode is driven by a class on <html> (next-themes attribute="class"). */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ============================================================
+   🎨 PASTEL DESIGN TOKENS
+   Change the colors below to re-tint the whole website at once.
+   Every `bg-*`, `text-*` and `border-*` utility is generated here.
+   ============================================================ */
+@theme {
+  /* Custom breakpoint: use it as `tiny:` (smaller than 350px screens) */
+  --breakpoint-tiny: 350px;
+
+  /* Brand palette */
+  --color-blush: #f7d9e3;
+  --color-rose: #e8a0b4;
+  --color-rose-deep: #c97a93;
+  --color-beige: #f5efe6;
+  --color-lavender: #e6e0f8;
+  --color-lilac: #c9beea;
+  --color-cream: #fffbf7;
+  --color-ink: #4a3f4b;
+  --color-ink-muted: #8a7c8e;
+  --color-border-soft: #eadfe8;
+
+  /* Semantic colors that automatically follow light / dark mode.
+     They point at the CSS variables defined in the base layer below. */
+  --color-base: var(--bg-base);
+  --color-surface: var(--bg-surface);
+  --color-elevated: var(--bg-elevated);
+  --color-body: var(--text-base);
+  --color-muted: var(--text-muted);
+  --color-line: var(--border-base);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+
+  /* Typography */
+  --font-sans: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-heading: "Fraunces", "Playfair Display", Georgia, "Times New Roman", serif;
+
+  /* Soft shadows only — never harsh black */
+  --shadow-soft: 0 10px 30px -12px rgba(232, 160, 180, 0.35);
+  --shadow-panel: 0 20px 60px -20px rgba(201, 190, 234, 0.45);
+
+  /* Animations */
+  --animate-blob: blob 7s infinite;
+  --animate-float: float 6s ease-in-out infinite;
+  --animate-bounce-soft: bounce-soft 2.2s ease-in-out infinite;
+  --animate-shine: shine 2.8s ease-in-out infinite;
+  --animate-pulse-soft: pulse-soft 4s ease-in-out infinite;
+  --animate-wiggle: wiggle 0.6s ease-in-out;
+
+  @keyframes blob {
+    0%,
+    100% {
+      transform: translate(0, 0) scale(1);
+    }
+    33% {
+      transform: translate(26px, -34px) scale(1.08);
+    }
+    66% {
+      transform: translate(-22px, 20px) scale(0.94);
+    }
+  }
+
+  @keyframes float {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-12px);
+    }
+  }
+
+  @keyframes bounce-soft {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(8px);
+    }
+  }
+
+  @keyframes shine {
+    0% {
+      transform: translateX(-130%) skewX(-12deg);
+    }
+    55%,
+    100% {
+      transform: translateX(240%) skewX(-12deg);
+    }
+  }
+
+  @keyframes pulse-soft {
+    0%,
+    100% {
+      opacity: 0.55;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.9;
+      transform: scale(1.05);
+    }
+  }
+
+  @keyframes wiggle {
+    0%,
+    100% {
+      transform: rotate(0deg);
+    }
+    25% {
+      transform: rotate(-12deg);
+    }
+    75% {
+      transform: rotate(12deg);
+    }
+  }
+}
+
+/* ============================================================
+   BASE LAYER — light + dark theme variables
+   ============================================================ */
+@layer base {
+  :root {
+    color-scheme: light;
+
+    --bg-base: #fffbf7;
+    --bg-surface: rgba(255, 255, 255, 0.8);
+    --bg-elevated: #ffffff;
+    --text-base: #4a3f4b;
+    --text-muted: #8a7c8e;
+    --border-base: #eadfe8;
+    --accent: #c97a93;
+    --accent-soft: rgba(232, 160, 180, 0.18);
+    --ring: rgba(201, 122, 147, 0.45);
+  }
+
+  .dark {
+    color-scheme: dark;
+
+    --bg-base: #1a1418;
+    --bg-surface: rgba(36, 28, 34, 0.8);
+    --bg-elevated: #241c22;
+    --text-base: #f3eaf0;
+    --text-muted: #b9a9bb;
+    --border-base: #33262e;
+    --accent: #e8a0b4;
+    --accent-soft: rgba(232, 160, 180, 0.14);
+    --ring: rgba(232, 160, 180, 0.5);
+  }
+
+  html {
+    overflow-x: clip;
+    scroll-behavior: smooth;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    @apply bg-[var(--bg-base)] font-sans text-body;
+    min-height: 100vh;
+    overflow-x: clip;
+    /*
+     * One continuous vertical wash that spans the whole document instead of
+     * fixed-position radial spots. A fixed background repaints against the
+     * viewport, which is what created a visible colour step where the hero
+     * ended. `scroll` + `100% 100%` keeps the gradient attached to the page,
+     * so every section sits on the exact same continuous background.
+     */
+    background-image: linear-gradient(
+      180deg,
+      rgba(247, 217, 227, 0.45) 0%,
+      rgba(230, 224, 248, 0.38) 16%,
+      rgba(255, 251, 247, 0) 42%,
+      rgba(255, 251, 247, 0) 100%
+    );
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  .dark body {
+    background-image: linear-gradient(
+      180deg,
+      rgba(90, 55, 74, 0.45) 0%,
+      rgba(70, 58, 100, 0.4) 16%,
+      rgba(26, 20, 24, 0) 42%,
+      rgba(26, 20, 24, 0) 100%
+    );
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-heading font-bold tracking-tight;
+    color: var(--text-base);
+  }
+
+  ::selection {
+    background: rgba(232, 160, 180, 0.35);
+    color: var(--text-base);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+    border-radius: 0.5rem;
+  }
+
+  /* Blush tinted scrollbar */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(232, 160, 180, 0.55) transparent;
+  }
+
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: rgba(232, 160, 180, 0.55);
+    border-radius: 9999px;
+    border: 2px solid transparent;
+    background-clip: content-box;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(201, 122, 147, 0.75);
+    background-clip: content-box;
+  }
+
+  img {
+    -webkit-user-drag: none;
+    user-select: none;
+  }
+}
+
+/* ============================================================
+   THEME TOGGLE — circle reveal view transition
+   The toggle button sets --toggle-x / --toggle-y before the
+   transition starts, so the circle grows out of the button.
+   ============================================================ */
+@keyframes circle-reveal {
+  from {
+    clip-path: circle(0% at var(--toggle-x, 50%) var(--toggle-y, 50%));
+  }
+  to {
+    clip-path: circle(150% at var(--toggle-x, 50%) var(--toggle-y, 50%));
+  }
+}
+
+@supports (view-transition-name: none) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none;
+    mix-blend-mode: normal;
+  }
+
+  ::view-transition-old(root) {
+    z-index: 1;
+  }
+
+  ::view-transition-new(root) {
+    z-index: 2;
+    animation: circle-reveal 0.55s ease-out both;
+  }
+}

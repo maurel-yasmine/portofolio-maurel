@@ -1,0 +1,226 @@
+/* ============================================================
+   Small shared utility classes.
+   Plain CSS only (no @apply) so this file stays safe and fast.
+   ============================================================ */
+
+/* ---- Counter badge -------------------------------------------------
+   Renders plain digits. The ligature settings stop fonts from turning
+   things like "15+" into a single joined glyph. */
+.count-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.6rem;
+  height: 1.6rem;
+  padding: 0 0.55rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  font-feature-settings: "liga" 0, "clig" 0;
+  font-variant-ligatures: none;
+  background: var(--accent-soft);
+  color: var(--accent);
+  border: 1px solid color-mix(in srgb, var(--accent) 35%, transparent);
+}
+
+/* ---- Loading skeleton --------------------------------------------- */
+.loader {
+  position: relative;
+  overflow: hidden;
+  border-radius: 1.25rem;
+  background: color-mix(in srgb, var(--border-base) 55%, transparent);
+}
+
+.loader::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in srgb, #ffffff 55%, transparent),
+    transparent
+  );
+  animation: loader-shimmer 1.6s infinite;
+}
+
+.dark .loader::after {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in srgb, #ffffff 12%, transparent),
+    transparent
+  );
+}
+
+@keyframes loader-shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* ---- Hide scrollbar but keep scrolling ----------------------------- */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* ---- Surfaces ------------------------------------------------------ */
+.surface-card {
+  border-radius: 1.5rem;
+  border: 1px solid var(--border-base);
+  background: var(--bg-surface);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow: 0 10px 30px -12px rgba(232, 160, 180, 0.35);
+}
+
+.panel-soft {
+  border-radius: 1.75rem;
+  border: 1px solid var(--border-base);
+  background: var(--bg-surface);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  box-shadow: 0 20px 60px -20px rgba(201, 190, 234, 0.45);
+}
+
+.glass-pill {
+  border-radius: 9999px;
+  border: 1px solid var(--border-base);
+  background: var(--bg-surface);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  box-shadow: 0 10px 30px -12px rgba(232, 160, 180, 0.35);
+}
+
+/* ---- Decorative blurred blobs -------------------------------------- */
+.blob {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(100px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ---- Gradient text -------------------------------------------------- */
+.text-gradient-rose {
+  background-image: linear-gradient(120deg, #c97a93 0%, #e8a0b4 45%, #c9beea 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* ---- Shine sweep (used on the "Let's Talk" button) ------------------ */
+.shine-wrap {
+  position: relative;
+  overflow: hidden;
+}
+
+.shine-wrap::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 45%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.55), transparent);
+  transform: translateX(-130%) skewX(-12deg);
+  pointer-events: none;
+}
+
+.shine-wrap:hover::after {
+  animation: shine 1.1s ease-in-out;
+}
+
+/* ---- Hero wave backdrop --------------------------------------------
+   The animated canvas fades to full transparency (via an alpha mask)
+   instead of fading into a painted colour. That way it dissolves into the
+   page's own background and can never leave a colour seam at the hero edge. */
+.hero-waves {
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    #000 0%,
+    #000 38%,
+    rgba(0, 0, 0, 0.6) 66%,
+    rgba(0, 0, 0, 0) 96%
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    #000 0%,
+    #000 38%,
+    rgba(0, 0, 0, 0.6) 66%,
+    rgba(0, 0, 0, 0) 96%
+  );
+}
+
+/* ---- Soft mask fades (project image columns) ------------------------ */
+.mask-fade-right {
+  -webkit-mask-image: linear-gradient(to right, #000 55%, transparent 100%);
+  mask-image: linear-gradient(to right, #000 55%, transparent 100%);
+}
+
+.mask-fade-left {
+  -webkit-mask-image: linear-gradient(to left, #000 55%, transparent 100%);
+  mask-image: linear-gradient(to left, #000 55%, transparent 100%);
+}
+
+.mask-fade-bottom {
+  -webkit-mask-image: linear-gradient(to bottom, #000 60%, transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 60%, transparent 100%);
+}
+
+/* ---- Line clamp fallback (Tailwind also ships line-clamp-*) --------- */
+.clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* ---- Dashed decorative border --------------------------------------- */
+.dashed-soft {
+  border: 1.5px dashed color-mix(in srgb, var(--accent) 45%, transparent);
+}
+
+/* ---- Prose (blog / long text) tuning -------------------------------- */
+.prose-soft {
+  --tw-prose-body: var(--text-base);
+  --tw-prose-headings: var(--text-base);
+  --tw-prose-links: var(--accent);
+  --tw-prose-bold: var(--text-base);
+  --tw-prose-quotes: var(--text-base);
+  --tw-prose-quote-borders: var(--accent);
+  --tw-prose-bullets: var(--accent);
+  --tw-prose-counters: var(--accent);
+  --tw-prose-hr: var(--border-base);
+  max-width: 70ch;
+}
+
+/* ---- Gentle entrance used by InitialMotion -------------------------- */
+.fade-up-init {
+  opacity: 0;
+  transform: translateY(18px);
+}
+
+.fade-up-done {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
