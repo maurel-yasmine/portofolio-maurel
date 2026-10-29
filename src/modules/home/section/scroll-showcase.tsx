@@ -23,7 +23,7 @@ interface Slide {
 const SLIDES: Slide[] = [
   {
     id: "cv",
-    heading: "DOWNLOAD MY CV",
+    heading: "DOWNLOAD CV",
     metric:
       "Explore my complete academic background, data engineering projects, and technical skill sets.",
     ctaLabel: "Download CV",
